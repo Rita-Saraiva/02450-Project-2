@@ -1,0 +1,106 @@
+# -*- coding: utf-8 -*-
+"""
+Created on %(date)s
+
+@author: %(Mathias)s
+"""
+
+import os
+os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/')
+
+
+#Loading the data
+import numpy as np
+
+# We will load the data with pd
+import pandas as pd
+
+# We start by defining the path to the file that we're we need to load.
+# Upon inspection, we saw that the messy_data.data was infact a file in the
+# format of a CSV-file with a ".data" extention instead.  
+file_path = r'C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/glass.data'
+# First of we simply read the file in using readtable, however, we need to
+# tell the function that the file is tab-seperated. We also need to specify
+# that the header is in the second row:
+data = pd.read_csv(file_path, sep=',', header=None)
+
+
+""" Preparing the Data"""
+
+#Raw data
+raw_data = data.values
+
+# The last column is an integer for the glass type (Classes)
+#We decide to extract this in a variable for itself
+glass_type = np.array(raw_data[:,10])
+
+#Continuous data
+D = raw_data[:,1:10]
+RI_Ratio = np.array([ RI_Element-1 for RI_Element in D[:,0]])
+D[:,0]=RI_Ratio
+
+#Defining the data as X
+X = D
+
+#Shape of data
+N, M = D.shape
+
+#Standardizing and then doing the same plots and computations
+# Subtract the mean from the data
+Y1 = X - np.ones((N, 1))*X.mean(0)
+
+# Subtract the mean from the data and divide by the attribute standard
+# deviation to obtain a standardized dataset:
+Y2 = X - np.ones((N, 1))*X.mean(0)
+Y2 = Y2*(1/np.std(Y2,0))
+# Here were utilizing the broadcasting of a row vector to fit the dimensions 
+# of Y2
+
+# Store the two in a cell, so we can just loop over them:
+Ys = [Y1, Y2]
+
+
+""" Class Names and One-of-K Coding"""
+#Class Names are found in the .names file and manually added
+ClassNames = ['Building Windows - Float Processed', 'Building Windows - Non Float Processed',
+              'Vehicle Windows - Float Processed','Vehicle Windows - Non Float Processed',
+              'Containers', 'Tableware', 'Headlamps']
+
+#Hereafter a dictionary is created according to the .names file
+ClassDict = dict(zip(ClassNames,range(1,8)))
+#Abreviations of Attributenames are also manually added
+ShortClassNames=["bwfp","bwnfp","vwfp","vwnfp",
+                 "conts","tware","hlamp"] 
+SclassDict = dict(zip(ShortClassNames,range(1,8)))
+
+
+#Attributenames are also manually added
+AttributeNames = ["Refractive Index","Sodium",
+                  "Magnesium","Aluminum","Silicon",
+                  "Potassium","Calcium","Barium","Iron"]
+#Abreviations of Attributenames are also manually added
+ShortAttributeNames = ["RI","Na","Mg","Al","Si","K","Ca","Ba","Fe"]
+
+
+#One-of-K Coding
+
+#Class Based - One-of-7 Coding - Matrix
+ClassKMartix=np.zeros([N,len(ClassNames)])
+
+# Class_Vector = np.array([ int(Element-1) for Element in glass_type]).T
+# K = len(ClassNames)
+# Class_Encoding = np.zeros((N, K))
+# Class_Encoding[np.arange(N), Class_Vector] = 1
+
+
+#Window/NonWindow Based - One-of-2 Coding - Matrix
+BinaryKMartix=np.zeros([N,2])
+
+for i in range(N):#glass type
+    Type=int(glass_type[i])-1
+    ClassKMartix[i,Type]=1
+    if Type<=4:
+        BinaryKMartix[i,0]=1
+    else:
+        BinaryKMartix[i,1]=1
+    
