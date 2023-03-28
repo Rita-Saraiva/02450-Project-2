@@ -2,7 +2,7 @@
 """
 Created on %(date)s
 
-@author: %(Mathias)s
+@author: %(Mathias, Jonas, Rita)s
 """
 
 import os
