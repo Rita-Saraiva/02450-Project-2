@@ -36,6 +36,7 @@ glass_type = np.array(raw_data[:,10])
 
 #Continuous data
 D = raw_data[:,1:10]
+#Sutracting 1 from all values to a true ratio
 RI_Ratio = np.array([ RI_Element-1 for RI_Element in D[:,0]])
 D[:,0]=RI_Ratio
 
@@ -53,6 +54,12 @@ Y1 = X - np.ones((N, 1))*X.mean(0)
 # deviation to obtain a standardized dataset:
 Y2 = X - np.ones((N, 1))*X.mean(0)
 Y2 = Y2*(1/np.std(Y2,0))
+
+mu = np.mean(X[:, :], 0)
+sigma = np.std(X[:, :], 0)
+
+
+Y3 = (X[:, :] - mu ) / sigma 
 # Here were utilizing the broadcasting of a row vector to fit the dimensions 
 # of Y2
 
