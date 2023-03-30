@@ -5,8 +5,8 @@ Created on %(date)s
 @author: %(Mathias, Jonas, Rita)s
 """
 
-import os
-os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/')
+#import os
+#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/')
 
 
 #Loading the data
@@ -18,11 +18,11 @@ import pandas as pd
 # We start by defining the path to the file that we're we need to load.
 # Upon inspection, we saw that the messy_data.data was infact a file in the
 # format of a CSV-file with a ".data" extention instead.  
-file_path = r'C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/glass.data'
+#file_path = r'C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/glass.data'
 # First of we simply read the file in using readtable, however, we need to
 # tell the function that the file is tab-seperated. We also need to specify
 # that the header is in the second row:
-data = pd.read_csv(file_path, sep=',', header=None)
+data = pd.read_csv("glass.data", sep=',', header=None)
 
 
 """ Preparing the Data"""
