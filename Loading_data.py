@@ -54,17 +54,16 @@ Y1 = X - np.ones((N, 1))*X.mean(0)
 # deviation to obtain a standardized dataset:
 Y2 = X - np.ones((N, 1))*X.mean(0)
 Y2 = Y2*(1/np.std(Y2,0))
+# Here were utilizing the broadcasting of a row vector to fit the dimensions 
+# of Y2
 
 mu = np.mean(X[:, :], 0)
 sigma = np.std(X[:, :], 0)
 
 
 Y3 = (X[:, :] - mu ) / sigma 
-# Here were utilizing the broadcasting of a row vector to fit the dimensions 
-# of Y2
 
-# Store the two in a cell, so we can just loop over them:
-Ys = [Y1, Y2]
+
 
 
 """ Class Names and One-of-K Coding"""
