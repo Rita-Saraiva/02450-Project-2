@@ -5,8 +5,8 @@ Created on %(date)s
 @author: %(Mathias, Jonas, Rita)s
 """
 
-#import os
-#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/')
+import os
+os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2/')
 
 
 #Loading the data
@@ -111,3 +111,7 @@ for i in range(N):#glass type
     else:
         BinaryKMartix[i,1]=1
     
+
+#Useful
+
+Class_Colors = ['r','g', 'b','c','k','m','y']

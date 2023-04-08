@@ -23,16 +23,13 @@ y = Y2[:,0].squeeze()
 #The X data is the rest of the features
 X = Y2[:,1:]
 
-#y = X[:,0]
-
-#X = X[:,1:]
 #Shape of X matrix
 N, M = X.shape
 
 # Add offset attribute
 X = np.concatenate((np.ones((X.shape[0],1)),X),1)
 attributeNames = [u'Offset']+AttributeNames[1:]
-M = M+1
+M += 1
 
 ## Crossvalidation
 # Create crossvalidation partition for evaluation
