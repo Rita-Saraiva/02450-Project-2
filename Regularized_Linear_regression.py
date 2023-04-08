@@ -16,6 +16,7 @@ from scipy.io import loadmat
 import sklearn.linear_model as lm
 from sklearn import model_selection
 from toolbox_02450 import rlr_validate
+
 #We want to do linear regression of the refractive index using the glass composition
 
 #Therefore the regression y data the first column 
@@ -23,9 +24,6 @@ y = Y2[:,0].squeeze()
 #The X data is the rest of the features
 X = Y2[:,1:]
 
-#y = X[:,0]
-
-#X = X[:,1:]
 #Shape of X matrix
 N, M = X.shape
 
@@ -37,11 +35,11 @@ M = M+1
 ## Crossvalidation
 # Create crossvalidation partition for evaluation
 K = 10
-CV = model_selection.KFold(K, shuffle=True)
+CV = model_selection.KFold(K, shuffle=True,random_state=1)
 #CV = model_selection.KFold(K, shuffle=False)
 
 # Values of lambda
-lambdas = np.power(10.,range(-5,9))
+lambdas = np.power(10.,np.arange(0,2,0.01))
 
 # Initialize variables
 #T = len(lambdas)
@@ -97,6 +95,7 @@ for train_index, test_index in CV.split(X,y):
     # Compute mean squared error without regularization
     Error_train[k] = np.square(y_train-X_train @ w_noreg[:,k]).sum(axis=0)/y_train.shape[0]
     Error_test[k] = np.square(y_test-X_test @ w_noreg[:,k]).sum(axis=0)/y_test.shape[0]
+    
     # OR ALTERNATIVELY: you can use sklearn.linear_model module for linear regression:
     #m = lm.LinearRegression().fit(X_train, y_train)
     #Error_train[k] = np.square(y_train-m.predict(X_train)).sum()/y_train.shape[0]

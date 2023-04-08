@@ -35,7 +35,7 @@ raw_data = data.values
 glass_type = np.array(raw_data[:,10])
 
 #Continuous data
-D = raw_data[:,1:10]
+D = np.array(raw_data[:,1:10],dtype=np.float64)
 #Sutracting 1 from all values to a true ratio
 RI_Ratio = np.array([ RI_Element-1 for RI_Element in D[:,0]])
 D[:,0]=RI_Ratio
@@ -110,3 +110,6 @@ for i in range(N):#glass type
     else:
         BinaryKMartix[i,1]=1
     
+#Generating new data matrix with ClassKmatrix concatenated with the data
+#Y_reg = np.concatenate((Y2,ClassKMartix),axis=1)
+
