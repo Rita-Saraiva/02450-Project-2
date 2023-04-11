@@ -41,17 +41,17 @@ X = stats.zscore(X)
 
 
 # K-fold crossvalidation
-K = 3              # only three folds to speed up this example
-CV = model_selection.KFold(K, shuffle=True,random_state=1)
+K1 = 5              # only three folds to speed up this example
+CV = model_selection.KFold(K1, shuffle=True,random_state=1)
 
 
     
 h = np.array([1, 2, 3])
-RMSE_error = np.zeros((K,len(h)))
-Best_Hidden= np.zeros((K,1))
+RMSE_error = np.zeros((K1,len(h)))
+Best_Hidden= np.zeros((K1,1))
 
 
- # Make a list for storing assigned color of learning curve for up to K=10
+ # Make a list for storing assigned color of learning curve for up to K1=5
  #color_list = ['tab:orange', 'tab:green', 'tab:purple', 'tab:brown', 'tab:pink',
  #              'tab:gray', 'tab:olive', 'tab:cyan', 'tab:red', 'tab:blue']
 
@@ -62,7 +62,7 @@ for (k, (train_index, test_index)) in enumerate(CV.split(X,y)):
         
         print('Number of hidden units: {0}'.format(n_hidden_units))
         # Parameters for neural network classifier
-        n_replicates = 3        # number of networks trained in each k-fold
+        n_replicates = 5        # number of networks trained in each k-fold
         max_iter = 10000
         
         # Setup figure for display of learning curves and error rates in fold
@@ -81,7 +81,7 @@ for (k, (train_index, test_index)) in enumerate(CV.split(X,y)):
         errors = [] # make a list for storing generalizaition error in each loop
     
         
-        print('\nCrossvalidation fold: {0}/{1}'.format(k+1,K))    
+        print('\nCrossvalidation fold: {0}/{1}'.format(k+1,K1))    
         
         # Extract training and test set for current CV fold, convert to tensors
         X_train = torch.Tensor(X[train_index,:])
