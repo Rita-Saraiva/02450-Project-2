@@ -4,6 +4,12 @@ Created on Tue Apr 11 15:27:46 2023
 
 @author: Rita and Mathias
 """
+
+"""
+Based on the 'rlr_validate' funtion from the package give
+"""
+
+
 import torch
 import numpy as np
 from sklearn import model_selection
@@ -11,27 +17,6 @@ from toolbox_02450 import train_neural_net
 
 def ANN_validate(X,y,h_units,cvf=5,n_replicates = 3):
     
-    ''' Validate regularized linear regression model using 'cvf'-fold cross validation.
-        Find the optimal lambda (minimizing validation error) from 'lambdas' list.
-        The loss function computed as mean squared error on validation set (MSE).
-        Function returns: MSE averaged over 'cvf' folds, optimal value of lambda,
-        average weight values for all lambdas, MSE train&validation errors for all lambdas.
-        The cross validation splits are standardized based on the mean and standard
-        deviation of the training set when estimating the regularization strength.
-        
-        Parameters:
-        X       training data set
-        y       vector of values
-        h_units vector of lambda values to be validated
-        cvf     number of crossvalidation folds     
-        
-        Returns:
-        opt_val_err         validation error for optimum lambda
-        opt_lambda          value of optimal lambda
-        mean_w_vs_lambda    weights as function of lambda (matrix)
-        train_err_vs_lambda train error as function of lambda (vector)
-        test_err_vs_lambda  test error as function of lambda (vector)
-    '''
     CV = model_selection.KFold(cvf, shuffle=True,random_state=1)
     M = X.shape[1]
     w = np.empty((M,cvf,len(h_units)))
@@ -87,11 +72,11 @@ def ANN_validate(X,y,h_units,cvf=5,n_replicates = 3):
             train_error[f,count]=final_loss
             test_error[f,count]=mse # store error rate for current CV fold 
     
-    opt_val_err = np.min(np.mean(test_error,axis=0))
-    opt_hunits = h_units[np.argmin(np.mean(test_error,axis=0))]
-    train_err_vs_hunits = np.mean(train_error,axis=0)
-    test_err_vs_hunits = np.mean(test_error,axis=0)
+    opt_val_err = np.min(np.mean(test_error,axis=1))
+    opt_hunits = h_units[np.argmin(np.mean(test_error,axis=1))]
+    train_err_vs_hunits = np.mean(train_error,axis=1)
+    test_err_vs_hunits = np.mean(test_error,axis=1)
     mean_w_vs_hunits = np.squeeze(np.mean(w,axis=1))
     
-    return opt_val_err, opt_hunits,train_err_vs_hunits,test_err_vs_hunits,mean_w_vs_hunits
+    return opt_val_err, opt_hunits, mean_w_vs_hunits, train_err_vs_hunits,test_err_vs_hunits
 
