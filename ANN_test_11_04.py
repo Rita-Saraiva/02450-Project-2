@@ -17,8 +17,6 @@ Created on Tue Apr 11 14:31:48 2023
 #Baseline model is equivalent to computing the mean of the y_train data and the predicting all y_test as y_train.mean()
 
 
-
-#Missing Gen Error outside of the outer loop
 #exercise 7_3_1 for setup I (section 11.3):
 ####
 
@@ -57,7 +55,7 @@ max_iter=10000
 
 hidden_units = np.array([1, 2, 3, 4, 5])
 regul_lamdas = np.power(10.,np.arange(0,2,0.01))
-weight = np.zeros((K1,9))
+weight = np.zeros((K1,8))
 Error_test_nofeatures = np.empty((K1,1))
 
 #for each outer fold contains for both models
@@ -74,7 +72,7 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     X_train = X[train_index]
     y_train = y[train_index]
     X_test = X[test_index]
-    y_test = y[test_index]
+    y_test = y[test_index].squeeze()
     
     
     print('\n Evaluation of RLR Inner_CV')
@@ -137,7 +135,17 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     Gen_Error_Table[k1,0]=mse
         
     
-    
+# %%    
+from tabulate import tabulate
+Table=np.zeros((5,6))
+Table[:,0]=np.arange(1,5+1).T
+Table[:,1]=Table_Info[:,0,0]
+Table[:,2]=Gen_Error_Table[:,0]
+Table[:,3]=Table_Info[:,1,0]
+Table[:,4]=Gen_Error_Table[:,1]
+Table[:,5]=Gen_Error_Table[:,2]
 
 
+Top=np.array([["Outer fold","ANN","","Linear","Regression","baseline"],["i","*h_i","Test^E_i","*Lambda_i","Test^E_i","Test^E_i"]])
+print(tabulate(Table, headers=Top, tablefmt="fancy_grid", showindex="always"))
                 
