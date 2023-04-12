@@ -26,14 +26,11 @@ from Loading_data import *
 
 
 # exercise 8.2.6
-import matplotlib.pyplot as plt
 import numpy as np
-from scipy.io import loadmat
 import torch
 from sklearn import model_selection
-from toolbox_02450 import train_neural_net, draw_neural_net, rlr_validate
-from scipy import stats
-from Suporting_Functions import ANN_validate
+from toolbox_02450 import train_neural_net, rlr_validate
+from Suporting_Functions import RLR_and_ANN_validate
 
 # Refractive Index - the feature we are trying predict
 y = Y2[:,[0]]
@@ -49,21 +46,20 @@ K1 = 5
 # K2-fold crossvalidation
 K2 = 5
 
+# Necessary parameters for the methods
 n_replicates=3
 max_iter=10000
-
-
 hidden_units = np.array([1, 2, 3, 4, 5])
 regul_lamdas = np.power(10.,np.arange(0,2,0.01))
 weight = np.zeros((K1,8))
-Error_test_nofeatures = np.empty((K1,1))
 
-#for each outer fold contains for both models
+
+#for each outer fold contains for the three models
 #the best tweaked paramter and its error
 Table_Info= np.zeros((K1,2,2)) #outer_fold,model,[parameter,error]
 Gen_Error_Table = np.zeros((K1,3)) #outer_fold,model
 
-CV = model_selection.KFold(K1, shuffle=True,random_state=1)
+CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
     
     print('\n Crossvalidation Outer Fold: {0}/{1}'.format(k1+1,K1))  
@@ -74,10 +70,11 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     X_test = X[test_index]
     y_test = y[test_index].squeeze()
     
-    
-    print('\n Evaluation of RLR Inner_CV')
-    RLR_opt_val_err, RLR_opt_lambda, RLR_mean_w_vs_lambda, RLR_train_err_vs_lambda, RLR_test_err_vs_lambda = rlr_validate(X_train, y_train, regul_lamdas, K2)  
+    print('\nCrossvalidation Inner Fold') 
+   
+    RLR_opt_val_err,RLR_opt_lambda,RLR_mean_w_vs_lambda,ANN_opt_val_err, ANN_opt_hunits = RLR_and_ANN_validate(X,y,regul_lamdas,hidden_units)
     Table_Info[k1,1,0]=RLR_opt_lambda; Table_Info[k1,1,1]=RLR_opt_val_err;
+    Table_Info[k1,0,0]=ANN_opt_hunits; Table_Info[k1,0,1]=ANN_opt_val_err;
     
     print('\n Evaluation of RLR Outer_CV')
     
@@ -90,19 +87,6 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     # Evaluate training and test performance  
     Gen_Error_Table[k1,1]=np.power(y_test-X_test @ weight[k1,:].T,2).mean(axis=0)
-
-    
-    print('\n Evaluation of baseline model Outer_CV')
-    #Computing test error
-    Error_test_nofeatures[k1] = np.square(y_test-y_test.mean()).sum(axis=0)/y_test.shape[0]
-    
-    #Storing basline model error 
-    Gen_Error_Table[k1,2] = Error_test_nofeatures[k1]     
-    
-
-    print('\n Evaluation of ANN Inner_CV')  
-    ANN_opt_val_err, ANN_opt_hunits, ANN_mean_w_vs_hunits, ANN_train_err_vs_hunits, ANN_test_err_vs_hunits = ANN_validate(X_train,y_train,hidden_units,cvf=K2,n_replicates=n_replicates)
-    Table_Info[k1,0,0]=ANN_opt_hunits; Table_Info[k1,0,1]=ANN_opt_val_err;
     
     print('\n Evaluation of ANN Outer_CV')  
 
@@ -133,9 +117,15 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     se = (y_test_est.float()-y_test.float())**2 # squared error
     mse = (sum(se).type(torch.float)/len(y_test)).data.numpy() #mean
     Gen_Error_Table[k1,0]=mse
+    
+    
+    
+    print('\n Evaluation of baseline model Outer_CV')
+    #Computing  and Storing basline model error 
+    Gen_Error_Table[k1,2] = np.square(y_test-y_test.mean()).sum(axis=0)/y_test.shape[0]
         
     
-# %%    
+## %%    
 from tabulate import tabulate
 Table=np.zeros((5,6))
 Table[:,0]=np.arange(1,5+1).T

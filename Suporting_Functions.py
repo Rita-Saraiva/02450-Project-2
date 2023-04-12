@@ -15,27 +15,49 @@ import numpy as np
 from sklearn import model_selection
 from toolbox_02450 import train_neural_net
 
-def ANN_validate(X,y,h_units,cvf=5,n_replicates = 3):
+
+def RLR_and_ANN_validate(X,y,lambdas,h_units,cvf=5,n_replicates = 3):
     
-    CV = model_selection.KFold(cvf, shuffle=True,random_state=1)
+    CV = model_selection.KFold(cvf, shuffle=True)
     M = X.shape[1]
-    w = np.empty((M,cvf,len(h_units)))
+    w = np.empty((M,cvf,len(lambdas)))
     
     # Parameters for neural network classifier
     #n_replicates = 3        # number of networks trained in each k-fold
     max_iter = 10000
     
-    train_error = np.empty((cvf,len(h_units)))
-    test_error = np.empty((cvf,len(h_units)))
+    ANN_test_error = np.empty((cvf,len(h_units)))
+    
+    RLR_test_error = np.empty((cvf,len(lambdas)))
     
     for (f, (train_index, test_index)) in enumerate(CV.split(X,y)):
         
-        print('\nCrossvalidation Inner Fold: {0}/{1}'.format(f+1,cvf)) 
+        
+        print('\nCrossvalidation of RLR Inner_CV: {0}/{1}'.format(f+1,cvf))
         
         X_train = X[train_index]
-        y_train = y[train_index]
+        y_train = y[train_index].squeeze()
         X_test = X[test_index]
-        y_test = y[test_index]
+        y_test = y[test_index].squeeze()
+        
+        # precompute terms
+        Xty = X_train.T @ y_train
+        XtX = X_train.T @ X_train
+               
+        for count,Lambda in enumerate(lambdas):
+            print('Crossvalidation of {0} Regularization  Lambda'.format(round(Lambda,5)))
+            
+            # Compute parameters for current value of lambda and current CV fold
+            # note: "linalg.lstsq(a,b)" is substitue for Matlab's left division operator "\"
+            lambdaI = Lambda * np.eye(M)
+            lambdaI[0,0] = 0 # remove bias regularization
+            w[:,f,count] = np.linalg.solve(XtX+lambdaI,Xty).squeeze()
+            # Evaluate training and test performance
+            RLR_test_error[f,count] = np.power(y_test-X_test @ w[:,f,count].T,2).mean(axis=0)
+        
+        
+        
+        print('\nCrossvalidation of ANN Inner_CV: {0}/{1}'.format(f+1,cvf))
         
         for count,n_hidden_units in enumerate(h_units):
             
@@ -69,14 +91,22 @@ def ANN_validate(X,y,h_units,cvf=5,n_replicates = 3):
             se = (y_test_est.float()-y_test.float())**2 # squared error
             mse = (sum(se).type(torch.float)/len(y_test)).data.numpy() #mean
             
-            train_error[f,count]=final_loss
-            test_error[f,count]=mse # store error rate for current CV fold 
+            ANN_test_error[f,count]=mse # store error rate for current CV fold 
+           
+        
+    print('\nCalculating Error of Crossvalidation Fold') 
+        
+    RLR_test_err_vs_lambda = np.mean(RLR_test_error,axis=0)
+    RLR_opt_val_err = np.min(RLR_test_err_vs_lambda)
+    RLR_opt_lambda = lambdas[np.argmin(RLR_test_err_vs_lambda)]
+    RLR_mean_w_vs_lambda = np.squeeze(np.mean(w,axis=1))
     
-    opt_val_err = np.min(np.mean(test_error,axis=1))
-    opt_hunits = h_units[np.argmin(np.mean(test_error,axis=1))]
-    train_err_vs_hunits = np.mean(train_error,axis=1)
-    test_err_vs_hunits = np.mean(test_error,axis=1)
-    mean_w_vs_hunits = np.squeeze(np.mean(w,axis=1))
     
-    return opt_val_err, opt_hunits, mean_w_vs_hunits, train_err_vs_hunits,test_err_vs_hunits
+    ANN_test_err_vs_hunits = np.mean(ANN_test_error,axis=1)
+    ANN_opt_val_err = np.min(ANN_test_err_vs_hunits)
+    ANN_opt_hunits = h_units[np.argmin(ANN_test_err_vs_hunits)]
+        
+    
+    return RLR_opt_val_err,RLR_opt_lambda,RLR_mean_w_vs_lambda,ANN_opt_val_err, ANN_opt_hunits
+
 
