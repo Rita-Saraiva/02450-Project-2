@@ -39,7 +39,7 @@ def ANN_validate(X,y,h_units,cvf=5,n_replicates = 3):
         
         for count,n_hidden_units in enumerate(h_units):
             
-            print('\n Crossvalidation of Hidden Units {0}/{1}'.format(n_hidden_units)) 
+            print('\n Crossvalidation of {0} Hidden Units '.format(n_hidden_units)) 
             
             # Define the model
             model = lambda: torch.nn.Sequential(
