@@ -63,7 +63,7 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     print('\n Crossvalidation Inner Fold') 
     
-    RLogR_opt_val_err,RLogR_opt_lambda,NB_opt_val_err,NB_opt_alphas = RLogR_and_NB_validate(X_train,y_train,regul_lambdas,alphas,cvf=K2)
+    RLogR_opt_val_err,RLogR_opt_lambda,NB_opt_val_err,NB_opt_alphas = RLogR_and_NB_validate(X_train,y_train,regularization_strength,alphas,cvf=K2)
     Table_Info[k1,1,0]=RLogR_opt_lambda; Table_Info[k1,1,1]=RLogR_opt_val_err;
     Table_Info[k1,0,0]=NB_opt_alphas; Table_Info[k1,0,1]=NB_opt_val_err;
     
@@ -75,12 +75,10 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     X_train = (X_train - mu_train) / sigma_train
     X_test = (X_test - mu_train) / sigma_train
     
-    regularization_strength = RLogR_opt_lambda
-    
     
     mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
                                    tol=1e-4, random_state=1, 
-                                   penalty='l2', C=1/regularization_strength)
+                                   penalty='l2', C=1/RLogR_opt_lambda)
     mdl.fit(X_train,y_train)
     y_test_est = mdl.predict(X_test)
 

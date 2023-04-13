@@ -16,16 +16,12 @@ from sklearn import model_selection
 from toolbox_02450 import train_neural_net
 
 
-def RLR_and_ANN_validate(X,y,lambdas,h_units,cvf=5,n_replicates = 3):
+def RLR_and_ANN_validate(X,y,lambdas,h_units,cvf=5,n_replicates = 3,max_iter = 10000):
     
     CV = model_selection.KFold(cvf, shuffle=True)
     M = X.shape[1]
     w = np.empty((M,cvf,len(lambdas)))
-    
-    # Parameters for neural network classifier
-    #n_replicates = 3        # number of networks trained in each k-fold
-    max_iter = 10000
-    
+        
     ANN_test_error = np.empty((cvf,len(h_units)))
     
     RLR_test_error = np.empty((cvf,len(lambdas)))
@@ -117,15 +113,14 @@ from sklearn.preprocessing import OneHotEncoder
 def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
     
     CV = model_selection.KFold(cvf, shuffle=True)
-    M = X.shape[1]
     
     NB_test_error = np.empty((cvf,len(alphas)))
     RLogR_test_error = np.empty((cvf,len(lambdas)))
     
     for (f, (train_index, test_index)) in enumerate(CV.split(X,y)):
         
-        
-        print('\n   Crossvalidation of RLogR Inner_CV: {0}/{1}'.format(f+1,cvf))
+        print('   Crossvalidation of Inner_CV: {0}/{1}'.format(f+1,cvf))
+        print('    Logistic Regression')
         
         # Extract training and test set for current CV fold
         X_train = X[train_index,:]
@@ -152,8 +147,7 @@ def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
         
             RLogR_test_error[f,count]=np.sum(y_test_est!=y_test) / len(y_test)
         
-        
-        print('\n   Crossvalidation of NB Inner_CV: {0}/{1}'.format(f+1,cvf))
+        print('    Naive Bayes')
         
         XNB = OneHotEncoder().fit_transform(X=X)
         
@@ -174,7 +168,6 @@ def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
             yNB_est = np.argmax(yNB_est_prob,1)
 
             NB_test_error[f,count]=np.sum(yNB_est!=yNB_test,dtype=float)/yNB_test.shape[0] # store error rate for current CV fold 
-        
         
     print('\n  Calculating Error of Crossvalidation Fold') 
         
