@@ -20,6 +20,8 @@ from sklearn.preprocessing import OneHotEncoder
 from Suporting_Functions import RLogR_and_NB_validate
 
 
+# Naive Bayes from ex7_4_4
+
 
 # Refractive Index - the feature we are trying predict
 y = glass_type.squeeze()
@@ -41,7 +43,7 @@ alphas = np.linspace(0.01,1.2,500) # pseudo-count, additive parameter (Laplace c
 fit_prior = True   # uniform prior (change to True to estimate prior from data)
 
 # Fit multinomial logistic regression model
-regularization_strength = np.linspace(0.1,10,500)
+regularization_strength = np.linspace(0.1,10,100)
 
 
 #for each outer fold contains for the three models
