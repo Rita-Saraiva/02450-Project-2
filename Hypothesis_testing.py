@@ -7,20 +7,20 @@ Created on %(date)s
 from ANN_test_11_04 import 
 
 #In the following script on the data from our comparison of the regression models
-# we do hypothesis testing
+# we do hypothesis testing by p value and confidence intervals
 
 #This is based on script 7.3.1
 
 
 from toolbox_02450 import *
-# requires data from exercise 1.5.1
-from ex5_1_5 import *
 
-loss = 2
-X,y = X[:,:10], X[:,10:]
-# This script crates predictions from three KNN classifiers using cross-validation
 
-K = 10
+loss = 2 #We use Mean squared error so loss = 2
+
+#Loading results from regression comparison script
+#Insert data here
+
+K = 10 #
 m = 1
 J = 0
 r = []

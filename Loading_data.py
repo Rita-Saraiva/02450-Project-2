@@ -5,8 +5,8 @@ Created on %(date)s
 @author: %(Mathias, Jonas, Rita)s
 """
 
-import os
-os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
+#import os
+#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
 
 
 #Loading the data
@@ -93,23 +93,20 @@ ShortAttributeNames = ["RI","Na","Mg","Al","Si","K","Ca","Ba","Fe"]
 #Class Based - One-of-7 Coding - Matrix
 ClassKMatrix=np.zeros([N,len(ClassNames)])
 
-# Class_Vector = np.array([ int(Element-1) for Element in glass_type]).T
-# K = len(ClassNames)
-# Class_Encoding = np.zeros((N, K))
-# Class_Encoding[np.arange(N), Class_Vector] = 1
-
 
 #Window/NonWindow Based - One-of-2 Coding - Matrix
 BinaryKMatrix=np.zeros([N,2])
+BinaryGlassType=np.zeros([N])
 
 for i in range(N):#glass type
     Type=int(glass_type[i])-1
     ClassKMatrix[i,Type]=1
     if Type<=4:
         BinaryKMatrix[i,0]=1
+        BinaryGlassType[i]=1
     else:
         BinaryKMatrix[i,1]=1
+        BinaryGlassType[i]=2
     
-#Generating new data matrix with ClassKmatrix concatenated with the data
-#Y_reg = np.concatenate((Y2,ClassKMartix),axis=1)
+
 
