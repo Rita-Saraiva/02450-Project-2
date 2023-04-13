@@ -2,7 +2,7 @@
 """
 Created on Wed Apr 12 15:30:57 2023
 
-@author: Rita
+@author: Rita and Jonas
 """
 import os
 os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
