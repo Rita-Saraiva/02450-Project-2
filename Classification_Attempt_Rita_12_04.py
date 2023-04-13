@@ -109,6 +109,32 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     
     print('\n Evaluation of baseline model Outer_CV')
+    
+    class_count=np.array([0]*7)
+    for element in y_train:
+        case = {
+            1: 'class_count[0]+=1',
+            2: 'class_count[1]+=1',
+            3: 'class_count[2]+=1',
+            4: 'class_count[3]+=1',
+            5: 'class_count[4]+=1',
+            6: 'class_count[5]+=1',
+            7: 'class_count[6]+=1',
+        }
+        statement = case[element]
+        exec(statement)
+    base_max=np.argmax(class_count)+1
+    
+    base_true =0
+    base_false =0
+    base_pred=np.array([base_max]*len(y_test))
+    base_error=(base_pred!=y_test)    
+    
+    #print(f'Error for baseline at Fold {k1+1} is {base_error.mean()} %')
+    
+    Gen_Error_Table[k1,2] = base_error.mean()
+
+    
 
 print('\nEnd of Cross-Validation') 
 

@@ -31,8 +31,7 @@ def RLR_and_ANN_validate(X,y,lambdas,h_units,cvf=5,n_replicates = 3):
     RLR_test_error = np.empty((cvf,len(lambdas)))
     
     for (f, (train_index, test_index)) in enumerate(CV.split(X,y)):
-        
-        
+                
         print('\nCrossvalidation of RLR Inner_CV: {0}/{1}'.format(f+1,cvf))
         
         X_train = X[train_index]
@@ -45,7 +44,7 @@ def RLR_and_ANN_validate(X,y,lambdas,h_units,cvf=5,n_replicates = 3):
         XtX = X_train.T @ X_train
                
         for count,Lambda in enumerate(lambdas):
-            print('Crossvalidation of {0} Regularization  Lambda'.format(round(Lambda,5)))
+            #print('Crossvalidation of {0} Regularization  Lambda'.format(round(Lambda,5)))
             
             # Compute parameters for current value of lambda and current CV fold
             # note: "linalg.lstsq(a,b)" is substitue for Matlab's left division operator "\"

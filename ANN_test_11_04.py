@@ -63,7 +63,7 @@ Gen_Error_Table = np.zeros((K1,3)) #outer_fold,model
 CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
     
-    print('\n Crossvalidation Outer Fold: {0}/{1}'.format(k1+1,K1))  
+    print('\nCrossvalidation Outer Fold: {0}/{1}'.format(k1+1,K1))  
     
     # extract training and test set of the Outer CV fold
     X_train = X[train_index]
@@ -71,9 +71,9 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     X_test = X[test_index]
     y_test = y[test_index].squeeze()
     
-    print('\nCrossvalidation Inner Fold') 
+    print('\n Crossvalidation Inner Fold') 
    
-    RLR_opt_val_err,RLR_opt_lambda,RLR_mean_w_vs_lambda,ANN_opt_val_err, ANN_opt_hunits = RLR_and_ANN_validate(X,y,regul_lamdas,hidden_units)
+    RLR_opt_val_err,RLR_opt_lambda,RLR_mean_w_vs_lambda,ANN_opt_val_err, ANN_opt_hunits = RLR_and_ANN_validate(X,y,regul_lamdas,hidden_units,cvf=K2,n_replicates = n_replicates)
     Table_Info[k1,1,0]=RLR_opt_lambda; Table_Info[k1,1,1]=RLR_opt_val_err;
     Table_Info[k1,0,0]=ANN_opt_hunits; Table_Info[k1,0,1]=ANN_opt_val_err;
     
@@ -111,7 +111,7 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
                                                         y=y_train,
                                                         n_replicates=n_replicates,
                                                         max_iter=max_iter)
-
+    
     # Determine estimated class labels for test set
     y_test_est = net(X_test)
     # Determine errors and errors
@@ -128,8 +128,8 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
 ## %%    
 from tabulate import tabulate
-Table=np.zeros((5,6))
-Table[:,0]=np.arange(1,5+1).T
+Table=np.zeros((K1,6))
+Table[:,0]=np.arange(1,K1+1).T
 Table[:,1]=Table_Info[:,0,0]
 Table[:,2]=Gen_Error_Table[:,0]
 Table[:,3]=Table_Info[:,1,0]

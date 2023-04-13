@@ -5,8 +5,8 @@ Created on %(date)s
 @author: %(Mathias, Jonas, Rita)s
 """
 
-#import os
-#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
+import os
+os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
 
 
 #Loading the data
@@ -56,11 +56,8 @@ Y2 = X - np.ones((N, 1))*X.mean(0)
 Y2 = Y2*(1/np.std(Y2,0))
 # Here were utilizing the broadcasting of a row vector to fit the dimensions 
 # of Y2
-
 mu = np.mean(X[:, :], 0)
 sigma = np.std(X[:, :], 0)
-
-
 Y3 = (X[:, :] - mu ) / sigma 
 
 
@@ -93,6 +90,11 @@ ShortAttributeNames = ["RI","Na","Mg","Al","Si","K","Ca","Ba","Fe"]
 #Class Based - One-of-7 Coding - Matrix
 ClassKMatrix=np.zeros([N,len(ClassNames)])
 
+# Class_Vector = np.array([ int(Element-1) for Element in glass_type]).T
+# K = len(ClassNames)
+# Class_Encoding = np.zeros((N, K))
+# Class_Encoding[np.arange(N), Class_Vector] = 1
+
 
 #Window/NonWindow Based - One-of-2 Coding - Matrix
 BinaryKMatrix=np.zeros([N,2])
@@ -107,6 +109,8 @@ for i in range(N):#glass type
     else:
         BinaryKMatrix[i,1]=1
         BinaryGlassType[i]=2
-    
 
+    
+#Generating new data matrix with ClassKmatrix concatenated with the data
+#Y_reg = np.concatenate((Y2,ClassKMartix),axis=1)
 
