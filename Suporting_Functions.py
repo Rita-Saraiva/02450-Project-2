@@ -119,7 +119,6 @@ def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
     
     CV = model_selection.KFold(cvf, shuffle=True)
     M = X.shape[1]
-    w = np.empty((M,cvf,len(lambdas)))
     
     NB_test_error = np.empty((cvf,len(alphas)))
     RLogR_test_error = np.empty((cvf,len(lambdas)))
@@ -127,7 +126,7 @@ def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
     for (f, (train_index, test_index)) in enumerate(CV.split(X,y)):
         
         
-        print('\nCrossvalidation of RLogR Inner_CV: {0}/{1}'.format(f+1,cvf))
+        print('\n   Crossvalidation of RLogR Inner_CV: {0}/{1}'.format(f+1,cvf))
         
         # Extract training and test set for current CV fold
         X_train = X[train_index,:]
@@ -155,7 +154,7 @@ def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
             RLogR_test_error[f,count]=np.sum(y_test_est!=y_test) / len(y_test)
         
         
-        print('\nCrossvalidation of NB Inner_CV: {0}/{1}'.format(f+1,cvf))
+        print('\n   Crossvalidation of NB Inner_CV: {0}/{1}'.format(f+1,cvf))
         
         XNB = OneHotEncoder().fit_transform(X=X)
         
@@ -178,25 +177,16 @@ def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5):
             NB_test_error[f,count]=np.sum(yNB_est!=yNB_test,dtype=float)/yNB_test.shape[0] # store error rate for current CV fold 
         
         
-    print('\nCalculating Error of Crossvalidation Fold') 
+    print('\n  Calculating Error of Crossvalidation Fold') 
         
     RLogR_test_err_vs_lambda = np.mean(RLogR_test_error,axis=0)
     RLogR_opt_val_err = np.min(RLogR_test_err_vs_lambda)
     RLogR_opt_lambda = lambdas[np.argmin(RLogR_test_err_vs_lambda)]
-    RLogR_mean_w_vs_lambda = np.squeeze(np.mean(w,axis=1))
         
     NB_test_err_vs_alpha = np.mean(NB_test_error,axis=1)
     NB_opt_val_err = np.min(NB_test_err_vs_alpha)
     NB_opt_alphas = alphas[np.argmin(NB_test_err_vs_alpha)]
         
     
-    return RLogR_opt_val_err,RLogR_opt_lambda,RLogR_mean_w_vs_lambda,NB_opt_val_err, NB_opt_alphas
-
-
-
-
-
-
-
-
+    return RLogR_opt_val_err,RLogR_opt_lambda,NB_opt_val_err, NB_opt_alphas
 
