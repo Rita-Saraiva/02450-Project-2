@@ -14,115 +14,35 @@ from Loading_data import *
 #Importing packages
 import numpy as np
 import torch
+import sklearn.linear_model as lm
 from sklearn import model_selection
 from toolbox_02450 import train_neural_net, rlr_validate
-#from Suporting_Functions import RLogR_and_NB_validate
-
-
-
-
-
-from sklearn.naive_bayes import MultinomialNB
-
-def RLogR_and_NB_validate(X,y,lambdas,alphas,cvf=5,n_replicates = 3):
-    
-    CV = model_selection.KFold(cvf, shuffle=True)
-    M = X.shape[1]
-    w = np.empty((M,cvf,len(lambdas)))
-    
-    NB_test_error = np.empty((cvf,len(alphas)))
-    RLogR_test_error = np.empty((cvf,len(lambdas)))
-    
-    for (f, (train_index, test_index)) in enumerate(CV.split(X,y)):
-        
-        
-        print('\nCrossvalidation of RLogR Inner_CV: {0}/{1}'.format(f+1,cvf))
-        
-        #JONAS
-               
-        for count,Lambda in enumerate(lambdas):
-            #JONAS
-            pass
-        
-        
-        
-        print('\nCrossvalidation of NB Inner_CV: {0}/{1}'.format(f+1,cvf))
-        
-        # extract training and test set for current CV fold
-        X_train = X[train_index,:]
-        y_train = y[train_index]
-        X_test = X[test_index,:]
-        y_test = y[test_index]
-        
-        for count,alpha in enumerate(alphas):
-            
-            print('\n Crossvalidation of {0} Alpha '.format(alpha)) 
-            
-            nb_classifier = MultinomialNB(alpha=alpha,
-                                          fit_prior=True)
-            nb_classifier.fit(X_train, y_train)
-            y_est_prob = nb_classifier.predict_proba(X_test)
-            y_est = np.argmax(y_est_prob,1)
-
-            NB_test_error[f,count]=np.sum(y_est!=y_test,dtype=float)/y_test.shape[0] # store error rate for current CV fold 
-        
-        
-    print('\nCalculating Error of Crossvalidation Fold') 
-        
-    RLogR_test_err_vs_lambda = np.mean(RLogR_test_error,axis=0)
-    RLogR_opt_val_err = np.min(RLogR_test_err_vs_lambda)
-    RLogR_opt_lambda = lambdas[np.argmin(RLogR_test_err_vs_lambda)]
-    RLogR_mean_w_vs_lambda = np.squeeze(np.mean(w,axis=1))
-        
-    NB_test_err_vs_alpha = np.mean(NB_test_error,axis=1)
-    NB_opt_val_err = np.min(NB_test_err_vs_alpha)
-    NB_opt_alphas = alphas[np.argmin(NB_test_err_vs_alpha)]
-        
-    
-    return RLogR_opt_val_err,RLogR_opt_lambda,RLogR_mean_w_vs_lambda,NB_opt_val_err, NB_opt_alphas
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+from Suporting_Functions import RLogR_and_NB_validate
 
 
 # Refractive Index - the feature we are trying predict
 y = glass_type.squeeze()
+#BinaryGlassType
 #The X data is the rest of the features
 X = Y2
 
 N, M = X.shape
 
-
 # K1-fold crossvalidation
-K1 = 5
+K1 = 2
 # K2-fold crossvalidation
-K2 = 5
+K2 = 2
 
 # Necessary parameters for the methods
 
 # Naive Bayes classifier parameters
-alpha = 1.0 # pseudo-count, additive parameter (Laplace correction if 1.0 or Lidtstone smoothing otherwise)
+alphas = np.linspace(0.5,1.5) # pseudo-count, additive parameter (Laplace correction if 1.0 or Lidtstone smoothing otherwise)
 fit_prior = True   # uniform prior (change to True to estimate prior from data)
 
 ###############
-regul_lamdas = np.power(10.,np.arange(0,2,0.01))
+# Fit multinomial logistic regression model
+regularization_strength = np.linspace(0.1,100,500)
+regul_lambdas = np.power(10.,np.arange(0,2,0.01))
 ###############
 
 
@@ -135,7 +55,7 @@ Gen_Error_Table = np.zeros((K1,3)) #outer_fold,model
 CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
     
-    print('Crossvalidation fold: {0}/{1}'.format(k+1,K1))
+    print('Crossvalidation fold: {0}/{1}'.format(k1+1,K1))
 
     # Extract training and test set for current CV fold
     X_train = X[train_index,:]
@@ -145,6 +65,32 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     print('\nCrossvalidation Inner Fold') 
     
-    RLogR_opt_val_err,RLogR_opt_lambda,RLogR_mean_w_vs_lambda,NB_opt_val_err, NB_opt_alphas = RLogR_and_NB_validate(X,y,regul_lamdas,alphas,cvf=5,n_replicates = 3)
+    RLogR_opt_val_err,RLogR_opt_lambda,RLogR_mean_w_vs_lambda,NB_opt_val_err, NB_opt_alphas = RLogR_and_NB_validate(X_train,y_train,regul_lambdas,alphas,cvf=K2)
     Table_Info[k1,1,0]=RLogR_opt_lambda; Table_Info[k1,1,1]=RLogR_opt_val_err;
     Table_Info[k1,0,0]=NB_opt_alphas; Table_Info[k1,0,1]=NB_opt_val_err;
+    
+    print('\n Evaluation of RLogR Outer_CV') 
+   
+    # Standardize the training and set set based on training set mean and std
+    mu_train = np.mean(X_train, 0)
+    sigma_train = np.std(X_train, 0)
+    X_train = (X_train - mu_train) / sigma_train
+    X_test = (X_test - mu_train) / sigma_train
+    
+    regularization_strength = RLogR_opt_lambda
+    
+    
+    mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
+                                   tol=1e-4, random_state=1, 
+                                   penalty='l2', C=1/regularization_strength)
+    mdl.fit(X_train,y_train)
+    y_test_est = mdl.predict(X_test)
+
+
+    Gen_Error_Table[k1,0] = np.sum(y_test_est!=y_test) / len(y_test)
+    
+    
+    
+    
+    print('\n Evaluation of baseline model Outer_CV')
+
