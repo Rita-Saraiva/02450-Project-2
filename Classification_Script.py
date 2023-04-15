@@ -5,8 +5,8 @@ Created on Sat Apr 15 13:47:14 2023
 @author: Rita, Jonas and Mathias
 """
 
-import os
-os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
+#import os
+#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
 
 
 #Importing data
@@ -37,7 +37,7 @@ K2 = 5
 # Tree complexity parameter - constraint on maximum depth
 treecomplexity = np.arange(2, 21, 1)
 # Fit multinomial logistic regression model
-regularization_strength = np.linspace(0.1,1)
+regularization_strength = np.linspace(0.01,10)
 
 
 #for each outer fold contains for the three models
@@ -73,7 +73,7 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     
     mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
-                                   tol=1e-4, random_state=1, 
+                                   tol=1e-2, 
                                    penalty='l2', C=1/RLogR_opt_lambda)
     mdl.fit(X_train,y_train)
     y_test_est = mdl.predict(X_test)

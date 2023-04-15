@@ -140,8 +140,9 @@ def RLogR_and_CT_validate(X,y,lambdas,treecomplex,cvf=5):
             #print('\n Crossvalidation of {0} Lambda '.format(round(Lambda,5)))
             
             mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
-                                           tol=1e-4, random_state=1, 
-                                           penalty='l2', C=1/Lambda)
+                                           tol=1e-2, 
+                                           penalty='l2', C=1/Lambda,
+                                           max_iter=1000000)
             mdl.fit(X_train,y_train)
             y_test_est = mdl.predict(X_test)
         
