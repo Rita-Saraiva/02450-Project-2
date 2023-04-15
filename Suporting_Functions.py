@@ -106,6 +106,80 @@ def RLR_and_ANN_validate(X,y,lambdas,h_units,cvf=5,n_replicates = 3,max_iter = 1
 
 
 import sklearn.linear_model as lm
+from sklearn import tree
+
+
+
+def RLogR_and_CT_validate(X,y,lambdas,treecomplex,cvf=5):
+    
+    CV = model_selection.KFold(cvf, shuffle=True)
+    
+    CT_test_error = np.empty((cvf,len(treecomplex)))
+    RLogR_test_error = np.empty((cvf,len(lambdas)))
+    
+    for (f, (train_index, test_index)) in enumerate(CV.split(X,y)):
+        
+        print('   Crossvalidation of Inner_CV: {0}/{1}'.format(f+1,cvf))
+        print('    Logistic Regression')
+        
+        # Extract training and test set for current CV fold
+        X_train = X[train_index,:]
+        y_train = y[train_index]
+        X_test = X[test_index,:]
+        y_test = y[test_index]
+        
+        # Standardize the training and set set based on training set mean and std
+        mu_train = np.mean(X_train, 0)
+        sigma_train = np.std(X_train, 0)
+        X_train = (X_train - mu_train) / sigma_train
+        X_test = (X_test - mu_train) / sigma_train
+        
+               
+        for count,Lambda in enumerate(lambdas):
+            
+            #print('\n Crossvalidation of {0} Lambda '.format(round(Lambda,5)))
+            
+            mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
+                                           tol=1e-4, random_state=1, 
+                                           penalty='l2', C=1/Lambda)
+            mdl.fit(X_train,y_train)
+            y_test_est = mdl.predict(X_test)
+        
+            RLogR_test_error[f,count]=np.sum(y_test_est!=y_test) / len(y_test)
+        
+        print('    Classification Tree')
+        
+        for count, tc in enumerate(treecomplex):
+            
+            #print('\n Crossvalidation of {0} Tree Complexity '.format(round(alpha,5)))
+            
+            # Fit decision tree classifier, Gini split criterion, different pruning levels
+            dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=tc)
+            dtc = dtc.fit(X_train,y_train)
+        
+            # Evaluate classifier's misclassification rate over train/test data
+            y_est_test = np.asarray(dtc.predict(X_test),dtype=int)
+            
+            CT_test_error[f,count]= sum(y_est_test != y_test) / y_est_test.shape[0] # store error rate for current CV fold 
+        
+    print('\n  Calculating Error of Crossvalidation Fold') 
+        
+    RLogR_test_err_vs_lambda = np.mean(RLogR_test_error,axis=0)
+    RLogR_opt_val_err = np.min(RLogR_test_err_vs_lambda)
+    RLogR_opt_lambda = lambdas[np.argmin(RLogR_test_err_vs_lambda)]
+        
+    CT_test_err_vs_TC = np.mean(CT_test_error,axis=1)
+    CT_opt_val_err = np.min(CT_test_err_vs_TC)
+    CT_opt_tc = treecomplex[np.argmin(CT_test_err_vs_TC)]
+    
+    return RLogR_opt_val_err,RLogR_opt_lambda,CT_opt_val_err, CT_opt_tc
+
+
+
+
+#%%
+
+#import sklearn.linear_model as lm
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import OneHotEncoder
 

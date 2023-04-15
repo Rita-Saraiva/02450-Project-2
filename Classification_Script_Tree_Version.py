@@ -2,7 +2,7 @@
 """
 Created on Sat Apr 15 13:47:14 2023
 
-@author: Rita, Jonas and Mathias
+@author: Rita
 """
 
 import os
@@ -123,8 +123,6 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
 
 print('\nEnd of Cross-Validation') 
 
-Top=np.array([["Outer fold","Class Tree","","Logistic","Regression","baseline"],
-              ["i        ","*h_i","Test^E_i","*Lambda_i ","Test^E_i ","Test^E_i"]])
 
 Table=np.zeros((K1,6))
 Table[:,0]=np.arange(1,K1+1).T
@@ -133,5 +131,3 @@ Table[:,2]=Gen_Error_Table[:,0]
 Table[:,3]=Table_Info[:,1,0]
 Table[:,4]=Gen_Error_Table[:,1]
 Table[:,5]=Gen_Error_Table[:,2]
-
-print(Top[0],'\n',Top[1],'\n',Table)
