@@ -4,62 +4,45 @@ Created on %(date)s
 
 @author: %(Mathias)s
 """
-from ANN_test_11_04 import 
+import pickle
+from toolbox_02450 import *
 
 #In the following script on the data from our comparison of the regression models
 # we do hypothesis testing by p value and confidence intervals
 
 #This is based on script 7.3.1
-
-
-from toolbox_02450 import *
-
-
-loss = 2 #We use Mean squared error so loss = 2
-
 #Loading results from regression comparison script
-#Insert data here
+# Load Info_Table from file
+with open('Reg_Table.pickle', 'rb') as f:
+    Reg_Table = pickle.load(f)
+    
+hp_Table=Reg_Table
 
-K = 10 #
-m = 1
-J = 0
-r = []
-kf = model_selection.KFold(n_splits=K)
+#%% 
 
-for dm in range(m):
-    y_true = []
-    yhat = []
-
-    for train_index, test_index in kf.split(X):
-        X_train, y_train = X[train_index,:], y[train_index]
-        X_test, y_test = X[test_index, :], y[test_index]
-
-        mA = sklearn.linear_model.LinearRegression().fit(X_train, y_train)
-        mB = sklearn.tree.DecisionTreeRegressor().fit(X_train, y_train)
-
-        yhatA = mA.predict(X_test)
-        yhatB = mB.predict(X_test)[:, np.newaxis]  # justsklearnthings
-        y_true.append(y_test)
-        yhat.append( np.concatenate([yhatA, yhatB], axis=1) )
-
-        r.append( np.mean( np.abs( yhatA-y_test ) ** loss - np.abs( yhatB-y_test) ** loss ) )
-
-# Initialize parameters and run test appropriate for setup II
 alpha = 0.05
-rho = 1/K
-p_setupII, CI_setupII = correlated_ttest(r, rho, alpha=alpha)
 
-if m == 1:
-    y_true = np.concatenate(y_true)[:,0]
-    yhat = np.concatenate(yhat)
+Models=["ANN","RLR","Baseline"]
 
-    # note our usual setup I ttest only makes sense if m=1.
-    zA = np.abs(y_true - yhat[:,0] ) ** loss
-    zB = np.abs(y_true - yhat[:,1] ) ** loss
-    z = zA - zB
+Z=np.zeros((hp_Table.shape[0],3))
+Z[:,0]=hp_Table[:,2]
+Z[:,1]=hp_Table[:,4]
+Z[:,2]=hp_Table[:,5]
 
-    CI_setupI = st.t.interval(1 - alpha, len(z) - 1, loc=np.mean(z), scale=st.sem(z))  # Confidence interval
-    p_setupI = st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=len(z) - 1)  # p-value
 
-    print( [p_setupII, p_setupI] )
-    print(CI_setupII, CI_setupI )
+for i in range(3):
+    for j in range(i):
+        if i==j:
+            pass
+        else:
+            print("\n  \nModel {0} and {1}".format(Models[i],Models[j]))
+            z=Z[:,i]-Z[:,j]
+            z_hat= np.mean(z)
+            sigma= st.sem(z)
+            
+            CI_setupI = st.t.interval(1 - alpha, len(z) - 1, loc=z_hat, scale=st.sem(z))  # Confidence interval
+            p_setupI = 2*st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=len(z) - 1)  # p-value
+
+            print( "p="+str(p_setupI) )
+            print("mean(z)="+str(z_hat) )
+            print("CI=("+str(CI_setupI[0])+","+str(CI_setupI[1])+")")
