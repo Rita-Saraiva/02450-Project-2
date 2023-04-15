@@ -126,17 +126,23 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     Gen_Error_Table[k1,2] = np.square(y_test-y_test.mean()).sum(axis=0)/y_test.shape[0]
         
     
-## %%    
-from tabulate import tabulate
-Table=np.zeros((K1,6))
-Table[:,0]=np.arange(1,K1+1).T
-Table[:,1]=Table_Info[:,0,0]
-Table[:,2]=Gen_Error_Table[:,0]
-Table[:,3]=Table_Info[:,1,0]
-Table[:,4]=Gen_Error_Table[:,1]
-Table[:,5]=Gen_Error_Table[:,2]
+#%%    
+import pickle
 
+from tabulate import tabulate
+Reg_Table=np.zeros((K1,6))
+Reg_Table[:,0]=np.arange(1,K1+1).T
+Reg_Table[:,1]=Table_Info[:,0,0]
+Reg_Table[:,2]=Gen_Error_Table[:,0]
+Reg_Table[:,3]=Table_Info[:,1,0]
+Reg_Table[:,4]=Gen_Error_Table[:,1]
+Reg_Table[:,5]=Gen_Error_Table[:,2]
+
+with open('Reg_Table.pickle', 'wb') as f:
+    pickle.dump(Reg_Table, f)
 
 Top=np.array([["Outer fold","ANN","","Linear","Regression","baseline"],["i","*h_i","Test^E_i","*Lambda_i","Test^E_i","Test^E_i"]])
 print(tabulate(Table, headers=Top, tablefmt="fancy_grid", showindex="always"))
+
+
                 
