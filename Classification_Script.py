@@ -5,8 +5,8 @@ Created on Sat Apr 15 13:47:14 2023
 @author: Rita, Jonas and Mathias
 """
 
-import os
-os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
+#import os
+#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
 
 
 #Importing data
@@ -17,6 +17,7 @@ import numpy as np
 import sklearn.linear_model as lm
 from sklearn import model_selection, tree
 from Suporting_Functions import RLogR_and_CT_validate
+
 
 
 # Type of Glass - the class we are trying predict
@@ -37,7 +38,7 @@ K2 = 5
 # Tree complexity parameter - constraint on maximum depth
 treecomplexity = np.arange(2, 21, 1)
 # Fit multinomial logistic regression model
-regularization_strength = np.linspace(0.1,1)
+regularization_strength = np.linspace(0.01,10)
 
 
 #for each outer fold contains for the three models
@@ -45,10 +46,15 @@ regularization_strength = np.linspace(0.1,1)
 Table_Info= np.zeros((K1,2,2)) #outer_fold,model,[parameter,error]
 Gen_Error_Table = np.zeros((K1,3)) #outer_fold,model
 
+y_hat_class=[]
+y_true_class=[]
 
 CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
-    
+    #dy_rlogr=[]
+    #dy_tree=[]
+    #dy_base=[]
+    dy=[]
     print('\nCrossvalidation Outer Fold: {0}/{1}'.format(k1+1,K1))
 
     # Extract training and test set for current CV fold
@@ -56,6 +62,8 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     y_train = y[train_index]
     X_test = X[test_index,:]
     y_test = y[test_index]
+    
+    y_true_class.append(y_test)
     
     print('\n Crossvalidation Inner Fold') 
     
@@ -73,16 +81,18 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     
     mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
-                                   tol=1e-4, random_state=1, 
+                                   tol=1e-2, 
                                    penalty='l2', C=1/RLogR_opt_lambda)
     mdl.fit(X_train,y_train)
     y_test_est = mdl.predict(X_test)
+    #dy_rlogr.append(y_test_est)
+    dy.append(y_test_est)
 
 
     Gen_Error_Table[k1,1] = np.sum(y_test_est!=y_test) / len(y_test)
     
     
-    print('\n Evaluation of NB Outer_CV')  
+    print('\n Evaluation of Class_Tree Outer_CV')  
     
     # Fit decision tree classifier, Gini split criterion, different pruning levels
     dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=CT_opt_tc)
@@ -90,7 +100,9 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
 
     # Evaluate classifier's misclassification rate over train/test data
     y_est_test = np.asarray(dtc.predict(X_test),dtype=int)
-        
+    
+    #dy_tree.append(y_est_test)
+    dy.append(y_est_test)
     Gen_Error_Table[k1,0] = sum(y_est_test != y_test) / y_est_test.shape[0]
     
     print('\n Evaluation of baseline model Outer_CV')
@@ -115,11 +127,24 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     base_pred=np.array([base_max]*len(y_test))
     base_error=(base_pred!=y_test)    
     
+    dy.append(base_pred)
+    #dy_base.append(base_pred)
+    
     #print(f'Error for baseline at Fold {k1+1} is {base_error.mean()} %')
-    
+    #dy.stack(dy,axis=1)
     Gen_Error_Table[k1,2] = base_error.mean()
+    y_hat_class.append(dy)
 
+#%%
+import pickle
+
+with open('y_hat_class.pickle', 'wb') as f:
+    pickle.dump(y_hat_class, f)
+with open('y_true_class.pickle', 'wb') as f:
+    pickle.dump(y_true_class, f)
     
+#y_hat_class=np.concatenate(y_hat_class)
+#y_true_class=np.concatenate(y_true_class)
 
 print('\nEnd of Cross-Validation') 
 
