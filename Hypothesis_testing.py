@@ -31,24 +31,20 @@ sq_loss_base_fix=[]
 
 for i in range(len(Sq_loss_ANN)):
     new_array=np.ravel(Sq_loss_ANN[i])
-    #globals()["Sq_loss_ANN_"+str(i+1)]=new_array
     sq_loss_ann_fix=np.concatenate((sq_loss_ann_fix,new_array))
     
 for i in range(len(Sq_loss_RLR)):
     new_array=np.ravel(Sq_loss_RLR[i])
-    #globals()["Sq_loss_RLR_"+str(i+1)]=new_array
     sq_loss_rlr_fix=np.concatenate((sq_loss_rlr_fix,new_array))
     
 for i in range(len(Sq_loss_base)):
     new_array=np.ravel(Sq_loss_base[i])
-    #globals()["Sq_loss_base_"+str(i+1)]=new_array
     sq_loss_base_fix=np.concatenate((sq_loss_base_fix,new_array))
 
 
 #%% 
 
 alpha = 0.05
-
 Models=["ANN","RLR","Baseline"]
 
 Z=np.zeros((214,3))
@@ -67,8 +63,8 @@ for i in range(3):
             z_hat= np.mean(z)
             sigma= st.sem(z)
             
-            CI_setupI = st.t.interval(1 - alpha, n - 1, loc=z_hat, scale=st.sem(z))  # Confidence interval
-            p_setupI = 2*st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=n - 1)  # p-value
+            CI_setupI = st.t.interval(1 - alpha, len(z) - 1, loc=z_hat, scale=st.sem(z))  # Confidence interval
+            p_setupI = 2*st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=len(z) - 1)  # p-value
 
             print( "p="+str(p_setupI) )
             print("mean(z)="+str(z_hat) )

@@ -116,3 +116,17 @@ for i in range(N):#glass type
 #Generating new data matrix with ClassKmatrix concatenated with the data
 #Y_reg = np.concatenate((Y2,ClassKMartix),axis=1)
 
+
+# =============================================================================
+# #PCA?
+# from scipy.linalg import svd
+# 
+# U,S,Vh = svd(Y2,full_matrices=False)
+# 
+# # Compute variance explained
+# rho = (S*S) / (S*S).sum() 
+# 
+# # Compute the projection onto the principal components
+# Z = U*S;
+# 
+# =============================================================================

@@ -24,6 +24,7 @@ y = Y2[:,0].squeeze()
 #The X data is the rest of the features
 X = Y2[:,1:]
 
+
 #Shape of X matrix
 N, M = X.shape
 
