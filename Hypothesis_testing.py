@@ -28,7 +28,8 @@ Z=np.zeros((hp_Table.shape[0],3))
 Z[:,0]=hp_Table[:,2]
 Z[:,1]=hp_Table[:,4]
 Z[:,2]=hp_Table[:,5]
-
+#n = 214
+n = 5
 
 for i in range(3):
     for j in range(i):
@@ -40,8 +41,8 @@ for i in range(3):
             z_hat= np.mean(z)
             sigma= st.sem(z)
             
-            CI_setupI = st.t.interval(1 - alpha, len(z) - 1, loc=z_hat, scale=st.sem(z))  # Confidence interval
-            p_setupI = 2*st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=len(z) - 1)  # p-value
+            CI_setupI = st.t.interval(1 - alpha, n - 1, loc=z_hat, scale=st.sem(z))  # Confidence interval
+            p_setupI = 2*st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=n - 1)  # p-value
 
             print( "p="+str(p_setupI) )
             print("mean(z)="+str(z_hat) )

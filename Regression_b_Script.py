@@ -51,7 +51,12 @@ K2 = 5
 n_replicates=3
 max_iter=10000
 hidden_units = np.array([1, 2, 3, 4, 5])
-regul_lamdas = np.power(10.,np.arange(0,2,0.01))
+
+# Values of lambda
+regul_lamdas=np.zeros([300])
+regul_lamdas[:100]=np.arange(0,1,0.01)
+regul_lamdas[100:] = np.power(10,np.arange(0,2,0.01))
+
 weight = np.zeros((K1,8))
 
 
@@ -59,6 +64,9 @@ weight = np.zeros((K1,8))
 #the best tweaked paramter and its error
 Table_Info= np.zeros((K1,2,2)) #outer_fold,model,[parameter,error]
 Gen_Error_Table = np.zeros((K1,3)) #outer_fold,model
+Sq_loss_RLR = []
+Sq_loss_ANN = []
+Sq_loss_base = [] 
 
 CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
@@ -87,7 +95,17 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     weight[k1,:] = np.linalg.solve(XtX+lambdaI,Xty).squeeze()
     
     # Evaluate training and test performance  
+    Sq_loss_RLR.append(np.power(y_test-X_test @ weight[k1,:].T,2).tolist())
     Gen_Error_Table[k1,1]=np.power(y_test-X_test @ weight[k1,:].T,2).mean(axis=0)
+    
+     
+    
+    print('\n Evaluation of baseline model Outer_CV')
+    #Computing  and Storing basline model error 
+    Sq_loss_base.append(np.square(y_test-y_test.mean()).tolist())   
+    Gen_Error_Table[k1,2] = np.square(y_test-y_test.mean()).sum(axis=0)/y_test.shape[0]
+        
+    
     
     print('\n Evaluation of ANN Outer_CV')  
 
@@ -116,15 +134,11 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     y_test_est = net(X_test)
     # Determine errors and errors
     se = (y_test_est.float()-y_test.float())**2 # squared error
+    Sq_loss_ANN.append(se.data.numpy().tolist())
     mse = (sum(se).type(torch.float)/len(y_test)).data.numpy() #mean
     Gen_Error_Table[k1,0]=mse
     
-    
-    
-    print('\n Evaluation of baseline model Outer_CV')
-    #Computing  and Storing basline model error 
-    Gen_Error_Table[k1,2] = np.square(y_test-y_test.mean()).sum(axis=0)/y_test.shape[0]
-        
+   
     
 #%%    
 import pickle
@@ -138,11 +152,27 @@ Reg_Table[:,3]=Table_Info[:,1,0]
 Reg_Table[:,4]=Gen_Error_Table[:,1]
 Reg_Table[:,5]=Gen_Error_Table[:,2]
 
-with open('Reg_Table.pickle', 'wb') as f:
+#Sq_loss_ANN_A = Sq_loss_ANN[0].squeeze(),Sq_loss_ANN[1].squeeze(),Sq_loss_ANN[2].squeeze(),Sq_loss_ANN[3].squeeze(),Sq_loss_ANN[4].squeeze())
+#Sq_loss_RLR_B = np.ravel(Sq_loss_RLR)
+#Sq_loss_base_C = np.ravel(Sq_loss_base)
+
+
+
+#Sq_loss = np.hstack(())
+with open('Sq_loss_ANN_2.pickle', 'wb') as f:
+    pickle.dump(Sq_loss_ANN, f)
+with open('Sq_loss_RLR_2.pickle', 'wb') as f:
+    pickle.dump(Sq_loss_RLR, f)
+with open('Sq_loss_base_2.pickle', 'wb') as f:
+    pickle.dump(Sq_loss_base, f)
+
+
+
+with open('Reg_Table_2.pickle', 'wb') as f:
     pickle.dump(Reg_Table, f)
 
 Top=np.array([["Outer fold","ANN","","Linear","Regression","baseline"],["i","*h_i","Test^E_i","*Lambda_i","Test^E_i","Test^E_i"]])
-print(tabulate(Table, headers=Top, tablefmt="fancy_grid", showindex="always"))
+print(tabulate(Reg_Table, headers=Top, tablefmt="fancy_grid", showindex="always"))
 
 
                 
