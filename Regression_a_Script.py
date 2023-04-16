@@ -39,10 +39,12 @@ CV = model_selection.KFold(K, shuffle=True,random_state=1)
 #CV = model_selection.KFold(K, shuffle=False)
 
 # Values of lambda
-lambdas = np.power(10.,np.arange(0,2,0.01))
+lambdas=np.zeros([1200])
+lambdas[:1000]=np.arange(0,1,0.001)
+lambdas[1000:] = np.power(10,np.arange(0,2,0.01))
 
 # Initialize variables
-#T = len(lambdas)
+
 Error_train = np.empty((K,1))
 Error_test = np.empty((K,1))
 Error_train_rlr = np.empty((K,1))
@@ -114,7 +116,7 @@ for train_index, test_index in CV.split(X,y):
         #legend(attributeNames[1:], loc='best')
         
         subplot(1,2,2)
-        title('Optimal lambda: 1e{0}'.format(np.log10(opt_lambda)))
+        title('Optimal lambda: {0}'.format((opt_lambda)))
         loglog(lambdas,train_err_vs_lambda.T,'b.-',lambdas,test_err_vs_lambda.T,'r.-')
         xlabel('Regularization factor')
         ylabel('Squared error (crossvalidation)')
