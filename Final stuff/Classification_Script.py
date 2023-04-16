@@ -78,11 +78,12 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     
     mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
-                                   tol=1e-2, 
+                                   tol=1e-4, 
                                    penalty='l2', C=1/RLogR_opt_lambda)
     mdl.fit(X_train,y_train)
     y_test_est = mdl.predict(X_test)
     dy.append(y_test_est)
+
 
 
     Gen_Error_Table[k1,1] = np.sum(y_test_est!=y_test) / len(y_test)
@@ -91,11 +92,12 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     print('\n Evaluation of Class_Tree Outer_CV')  
     
     # Fit decision tree classifier, Gini split criterion, different pruning levels
-    dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=CT_opt_tc)
+    dtc = tree.DecisionTreeClassifier(criterion='entropy', max_depth=CT_opt_tc)
     dtc = dtc.fit(X_train,y_train)
 
     # Evaluate classifier's misclassification rate over train/test data
     y_est_test = np.asarray(dtc.predict(X_test),dtype=int)
+
     
     dy.append(y_est_test)
     Gen_Error_Table[k1,0] = sum(y_est_test != y_test) / y_est_test.shape[0]
@@ -135,14 +137,11 @@ with open('y_hat_class.pickle', 'wb') as f:
     pickle.dump(y_hat_class, f)
 with open('y_true_class.pickle', 'wb') as f:
     pickle.dump(y_true_class, f)
-    
-#y_hat_class=np.concatenate(y_hat_class)
-#y_true_class=np.concatenate(y_true_class)
 
 print('\nEnd of Cross-Validation') 
 
 Top=np.array([["Outer fold","Class Tree","","Logistic","Regression","baseline"],
-              ["i        ","*h_i","Test^E_i","*Lambda_i ","Test^E_i ","Test^E_i"]])
+              ["i        ","*Depth","Test^E_i","*Lambda_i ","Test^E_i ","Test^E_i"]])
 
 Table=np.zeros((K1,6))
 Table[:,0]=np.arange(1,K1+1).T

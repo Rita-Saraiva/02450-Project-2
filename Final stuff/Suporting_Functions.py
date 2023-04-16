@@ -140,7 +140,7 @@ def RLogR_and_CT_validate(X,y,lambdas,treecomplex,cvf=5):
             #print('\n Crossvalidation of {0} Lambda '.format(round(Lambda,5)))
             
             mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
-                                           tol=1e-2, 
+                                           tol=1e-4, 
                                            penalty='l2', C=1/Lambda,
                                            max_iter=1000000)
             mdl.fit(X_train,y_train)
@@ -155,7 +155,7 @@ def RLogR_and_CT_validate(X,y,lambdas,treecomplex,cvf=5):
             #print('\n Crossvalidation of {0} Tree Complexity '.format(round(alpha,5)))
             
             # Fit decision tree classifier, Gini split criterion, different pruning levels
-            dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=tc)
+            dtc = tree.DecisionTreeClassifier(criterion='entropy', max_depth=tc)
             dtc = dtc.fit(X_train,y_train)
         
             # Evaluate classifier's misclassification rate over train/test data
