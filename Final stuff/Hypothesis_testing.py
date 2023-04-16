@@ -18,11 +18,11 @@ import numpy as np
 
 # Load Info_Table from file
 
-with open('Sq_loss_ANN_2.pickle', 'rb') as f:
+with open('Sq_loss_ANN_Final.pickle', 'rb') as f:
     Sq_loss_ANN = pickle.load(f)
-with open('Sq_loss_RLR_2.pickle', 'rb') as f:
+with open('Sq_loss_RLR_Final.pickle', 'rb') as f:
     Sq_loss_RLR = pickle.load(f)
-with open('Sq_loss_base_2.pickle', 'rb') as f:
+with open('Sq_loss_base_Final.pickle', 'rb') as f:
     Sq_loss_base = pickle.load(f)
 
 sq_loss_ann_fix=[]
@@ -71,8 +71,8 @@ for i in range(3):
             p_setupI = 2*st.t.cdf(-np.abs(np.mean(z)) / st.sem(z), df=len(z) - 1)  # p-value
 
             print( "p="+str(p_setupI) )
-            print("mean(z)="+str(z_hat) )
-            print("CI=("+str(CI_setupI[0])+","+str(CI_setupI[1])+")")
+            print("mean(z)="+str(round(z_hat,5)) )
+            print("CI=("+str(round(CI_setupI[0],5))+","+str(round(CI_setupI[1],5))+")")
                 
             
             

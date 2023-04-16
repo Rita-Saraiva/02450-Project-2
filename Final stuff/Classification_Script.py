@@ -6,7 +6,7 @@ Created on Sat Apr 15 13:47:14 2023
 """
 
 #import os
-#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
+#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2/02450-Project-2/Final stuff')
 
 
 #Importing data
@@ -51,9 +51,6 @@ y_true_class=[]
 
 CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
-    #dy_rlogr=[]
-    #dy_tree=[]
-    #dy_base=[]
     dy=[]
     print('\nCrossvalidation Outer Fold: {0}/{1}'.format(k1+1,K1))
 
@@ -69,7 +66,7 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     RLogR_opt_val_err,RLogR_opt_lambda,CT_opt_val_err, CT_opt_tc = RLogR_and_CT_validate(X,y,regularization_strength,treecomplexity,cvf=5)
     Table_Info[k1,1,0]=RLogR_opt_lambda; Table_Info[k1,1,1]=RLogR_opt_val_err;
-    Table_Info[k1,0,0]=CT_opt_tc; Table_Info[k1,0,1]=CT_opt_val_err;
+    Table_Info[k1,0,0]=CT_opt_tc;        Table_Info[k1,0,1]=CT_opt_val_err;
     
     print('\n Evaluation of RLogR Outer_CV') 
    
@@ -85,7 +82,6 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
                                    penalty='l2', C=1/RLogR_opt_lambda)
     mdl.fit(X_train,y_train)
     y_test_est = mdl.predict(X_test)
-    #dy_rlogr.append(y_test_est)
     dy.append(y_test_est)
 
 
@@ -101,7 +97,6 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     # Evaluate classifier's misclassification rate over train/test data
     y_est_test = np.asarray(dtc.predict(X_test),dtype=int)
     
-    #dy_tree.append(y_est_test)
     dy.append(y_est_test)
     Gen_Error_Table[k1,0] = sum(y_est_test != y_test) / y_est_test.shape[0]
     
@@ -128,10 +123,8 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     base_error=(base_pred!=y_test)    
     
     dy.append(base_pred)
-    #dy_base.append(base_pred)
     
     #print(f'Error for baseline at Fold {k1+1} is {base_error.mean()} %')
-    #dy.stack(dy,axis=1)
     Gen_Error_Table[k1,2] = base_error.mean()
     y_hat_class.append(dy)
 

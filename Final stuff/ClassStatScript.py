@@ -28,20 +28,13 @@ y_true_flat = np.ravel(y_hat_class[2])
 
 alpha = 0.05
 
-print("Comparing Logistic Regression and Decision Tree")
-print("")
+print("\n \n Comparing Logistic Regression and Decision Tree\n")
 [thetahat_rlog_tree, CI_rlog_tree, p_rlog_tree] = mcnemar(y_true_flat, y_hat_class_rlog, y_hat_class_tree, alpha=alpha)
-print("")
-print("")
-print("")
-print("Comparing Logistic Regression and Baseline")
-print("")
+
+print("\n \n Comparing Logistic Regression and Baseline\n")
 [thetahat_rlog_base, CI_rlog_base, p_rlog_base] = mcnemar(y_true_flat, y_hat_class_rlog, y_hat_class_base, alpha=alpha)
-print("")
-print("")
-print("")
-print("Comparing Decision Tree and Baseline")
-print("")
+
+print("\n \n Comparing Decision Tree and Baseline\n")
 [thetahat_tree_base, CI_tree_base, p_tree_base] = mcnemar(y_true_flat, y_hat_class_tree, y_hat_class_base, alpha=alpha)
 
 

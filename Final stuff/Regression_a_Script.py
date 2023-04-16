@@ -91,7 +91,7 @@ for train_index, test_index in CV.split(X,y):
     # Compute mean squared error with regularization with optimal lambda
     Error_train_rlr[k] = np.square(y_train-X_train @ w_rlr[:,k]).sum(axis=0)/y_train.shape[0]
     Error_test_rlr[k] = np.square(y_test-X_test @ w_rlr[:,k]).sum(axis=0)/y_test.shape[0]
-
+    
     # Estimate weights for unregularized linear regression, on entire training set
     w_noreg[:,k] = np.linalg.solve(XtX,Xty).squeeze()
     # Compute mean squared error without regularization
@@ -105,21 +105,11 @@ for train_index, test_index in CV.split(X,y):
 
     # Display the results for the last cross-validation fold
     if k == K-1:
-        figure(k, figsize=(12,8))
-        subplot(1,2,1)
-        semilogx(lambdas,mean_w_vs_lambda.T[:,1:],'.-') # Don't plot the bias term
-        xlabel('Regularization factor')
-        ylabel('Mean Coefficient Values')
-        grid()
-        # You can choose to display the legend, but it's omitted for a cleaner 
-        # plot, since there are many attributes
-        #legend(attributeNames[1:], loc='best')
-        
-        subplot(1,2,2)
+        figure(k, figsize=(6,8))
         title('Optimal lambda: {0}'.format((opt_lambda)))
-        loglog(lambdas,train_err_vs_lambda.T,'b.-',lambdas,test_err_vs_lambda.T,'r.-')
+        loglog(lambdas,train_err_vs_lambda.T*100,'b.-',lambdas,test_err_vs_lambda.T*100,'r.-')
         xlabel('Regularization factor')
-        ylabel('Squared error (crossvalidation)')
+        ylabel('Squared Error')
         legend(['Train error','Validation error'])
         grid()
     

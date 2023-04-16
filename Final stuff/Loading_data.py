@@ -5,8 +5,8 @@ Created on %(date)s
 @author: %(Mathias, Jonas, Rita)s
 """
 
-#import os
-#os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
+import os
+os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2/02450-Project-2/Final stuff')
 
 
 #Loading the data
@@ -94,7 +94,6 @@ ClassKMatrix=np.zeros([N,len(ClassNames)])
 # K = len(ClassNames)
 # Class_Encoding = np.zeros((N, K))
 # Class_Encoding[np.arange(N), Class_Vector] = 1
-
 
 #Window/NonWindow Based - One-of-2 Coding - Matrix
 BinaryKMatrix=np.zeros([N,2])
