@@ -10,17 +10,6 @@ Created on Tue Apr 11 14:31:48 2023
 #os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2')
 
 
-####
-
-#Missing Base line
-#Mathias is working on implementing the baseline model
-#Baseline model is equivalent to computing the mean of the y_train data and the predicting all y_test as y_train.mean()
-
-
-#exercise 7_3_1 for setup I (section 11.3):
-####
-
-
 #Importing data
 from Loading_data import * 
 
@@ -39,8 +28,6 @@ y = Y2[:,[0]]
 X = Y2[:,1:]
 
 N, M = X.shape
-
-
 
 # K1-fold crossvalidation
 K1 = 5
@@ -143,7 +130,15 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
 #%%    
 import pickle
 
+with open('Sq_loss_ANN_Final.pickle', 'wb') as f:
+    pickle.dump(Sq_loss_ANN, f)
+with open('Sq_loss_RLR_Final.pickle', 'wb') as f:
+    pickle.dump(Sq_loss_RLR, f)
+with open('Sq_loss_base_Final.pickle', 'wb') as f:
+    pickle.dump(Sq_loss_base, f)
+
 from tabulate import tabulate
+
 Reg_Table=np.zeros((K1,6))
 Reg_Table[:,0]=np.arange(1,K1+1).T
 Reg_Table[:,1]=Table_Info[:,0,0]
@@ -152,22 +147,6 @@ Reg_Table[:,3]=Table_Info[:,1,0]
 Reg_Table[:,4]=Gen_Error_Table[:,1]
 Reg_Table[:,5]=Gen_Error_Table[:,2]
 
-#Sq_loss_ANN_A = Sq_loss_ANN[0].squeeze(),Sq_loss_ANN[1].squeeze(),Sq_loss_ANN[2].squeeze(),Sq_loss_ANN[3].squeeze(),Sq_loss_ANN[4].squeeze())
-#Sq_loss_RLR_B = np.ravel(Sq_loss_RLR)
-#Sq_loss_base_C = np.ravel(Sq_loss_base)
-
-
-
-#Sq_loss = np.hstack(())
-with open('Sq_loss_ANN_Final.pickle', 'wb') as f:
-    pickle.dump(Sq_loss_ANN, f)
-with open('Sq_loss_RLR_Final.pickle', 'wb') as f:
-    pickle.dump(Sq_loss_RLR, f)
-with open('Sq_loss_base_Final.pickle', 'wb') as f:
-    pickle.dump(Sq_loss_base, f)
-
-
-
 with open('Reg_Table_2.pickle', 'wb') as f:
     pickle.dump(Reg_Table, f)
 
@@ -175,4 +154,3 @@ Top=np.array([["Outer fold","ANN","","Linear","Regression","baseline"],["i","*h_
 print(tabulate(Reg_Table, headers=Top, tablefmt="fancy_grid", showindex="always"))
 
 
-                
