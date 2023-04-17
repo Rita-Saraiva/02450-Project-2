@@ -159,11 +159,11 @@ Reg_Table[:,5]=Gen_Error_Table[:,2]
 
 
 #Sq_loss = np.hstack(())
-with open('Sq_loss_ANN_2.pickle', 'wb') as f:
+with open('Sq_loss_ANN_Final.pickle', 'wb') as f:
     pickle.dump(Sq_loss_ANN, f)
-with open('Sq_loss_RLR_2.pickle', 'wb') as f:
+with open('Sq_loss_RLR_Final.pickle', 'wb') as f:
     pickle.dump(Sq_loss_RLR, f)
-with open('Sq_loss_base_2.pickle', 'wb') as f:
+with open('Sq_loss_base_Final.pickle', 'wb') as f:
     pickle.dump(Sq_loss_base, f)
 
 
