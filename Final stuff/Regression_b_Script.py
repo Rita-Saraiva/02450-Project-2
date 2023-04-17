@@ -103,7 +103,7 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     print('\n Evaluation of baseline model Outer_CV')
     #Computing  and Storing basline model error 
     Sq_loss_base.append(np.square(y_test-y_test.mean()).tolist())   
-    Gen_Error_Table[k1,2] = np.square(y_test-y_test.mean()).sum(axis=0)/y_test.shape[0]
+    Gen_Error_Table[k1,2] = np.square(y_test-y_train.mean()).sum(axis=0)/y_train.shape[0]
         
     
     
