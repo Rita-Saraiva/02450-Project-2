@@ -152,13 +152,6 @@ Reg_Table[:,3]=Table_Info[:,1,0]
 Reg_Table[:,4]=Gen_Error_Table[:,1]
 Reg_Table[:,5]=Gen_Error_Table[:,2]
 
-#Sq_loss_ANN_A = Sq_loss_ANN[0].squeeze(),Sq_loss_ANN[1].squeeze(),Sq_loss_ANN[2].squeeze(),Sq_loss_ANN[3].squeeze(),Sq_loss_ANN[4].squeeze())
-#Sq_loss_RLR_B = np.ravel(Sq_loss_RLR)
-#Sq_loss_base_C = np.ravel(Sq_loss_base)
-
-
-
-#Sq_loss = np.hstack(())
 with open('Sq_loss_ANN_2.pickle', 'wb') as f:
     pickle.dump(Sq_loss_ANN, f)
 with open('Sq_loss_RLR_2.pickle', 'wb') as f:
