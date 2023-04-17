@@ -56,11 +56,6 @@ Y2 = X - np.ones((N, 1))*X.mean(0)
 Y2 = Y2*(1/np.std(Y2,0))
 # Here were utilizing the broadcasting of a row vector to fit the dimensions 
 # of Y2
-mu = np.mean(X[:, :], 0)
-sigma = np.std(X[:, :], 0)
-Y3 = (X[:, :] - mu ) / sigma 
-
-
 
 
 """ Class Names and One-of-K Coding"""
