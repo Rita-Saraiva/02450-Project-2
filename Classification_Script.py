@@ -22,9 +22,11 @@ from Suporting_Functions import RLogR_and_CT_validate
 
 # Type of Glass - the class we are trying predict
 y = glass_type.squeeze()
+
 #BinaryGlassType
 #The elements' presence and refractive index
 X = Y2
+
 
 N, M = X.shape
 
@@ -51,9 +53,7 @@ y_true_class=[]
 
 CV = model_selection.KFold(K1, shuffle=True)
 for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)): 
-    #dy_rlogr=[]
-    #dy_tree=[]
-    #dy_base=[]
+    
     dy=[]
     print('\nCrossvalidation Outer Fold: {0}/{1}'.format(k1+1,K1))
 
@@ -67,17 +67,19 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     
     print('\n Crossvalidation Inner Fold') 
     
-    RLogR_opt_val_err,RLogR_opt_lambda,CT_opt_val_err, CT_opt_tc = RLogR_and_CT_validate(X,y,regularization_strength,treecomplexity,cvf=5)
+    RLogR_opt_val_err,RLogR_opt_lambda,CT_opt_val_err, CT_opt_tc = RLogR_and_CT_validate(X,y,regularization_strength,treecomplexity,cvf=K2)
     Table_Info[k1,1,0]=RLogR_opt_lambda; Table_Info[k1,1,1]=RLogR_opt_val_err;
     Table_Info[k1,0,0]=CT_opt_tc; Table_Info[k1,0,1]=CT_opt_val_err;
     
     print('\n Evaluation of RLogR Outer_CV') 
    
-    # Standardize the training and set set based on training set mean and std
-    mu_train = np.mean(X_train, 0)
-    sigma_train = np.std(X_train, 0)
-    X_train = (X_train - mu_train) / sigma_train
-    X_test = (X_test - mu_train) / sigma_train
+# =============================================================================
+#     # Standardize the training and set set based on training set mean and std
+#     mu_train = np.mean(X_train, 0)
+#     sigma_train = np.std(X_train, 0)
+#     X_train = (X_train - mu_train) / sigma_train
+#     X_test = (X_test - mu_train) / sigma_train
+# =============================================================================
     
     
     mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
@@ -134,6 +136,9 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     #dy.stack(dy,axis=1)
     Gen_Error_Table[k1,2] = base_error.mean()
     y_hat_class.append(dy)
+    
+    
+print('\nEnd of Cross-Validation') 
 
 #%%
 import pickle
@@ -143,10 +148,6 @@ with open('y_hat_class.pickle', 'wb') as f:
 with open('y_true_class.pickle', 'wb') as f:
     pickle.dump(y_true_class, f)
     
-#y_hat_class=np.concatenate(y_hat_class)
-#y_true_class=np.concatenate(y_true_class)
-
-print('\nEnd of Cross-Validation') 
 
 Top=np.array([["Outer fold","Class Tree","","Logistic","Regression","baseline"],
               ["i        ","*h_i","Test^E_i","*Lambda_i ","Test^E_i ","Test^E_i"]])
