@@ -17,12 +17,11 @@ import numpy as np
 
 
 # Load Info_Table from file
-
-with open('Sq_loss_ANN_Final.pickle', 'rb') as f:
+with open('Sq_loss_ANN_Monday.pickle', 'rb') as f:
     Sq_loss_ANN = pickle.load(f)
-with open('Sq_loss_RLR_Final.pickle', 'rb') as f:
+with open('Sq_loss_RLR_Monday.pickle', 'rb') as f:
     Sq_loss_RLR = pickle.load(f)
-with open('Sq_loss_base_Final.pickle', 'rb') as f:
+with open('Sq_loss_base_Monday.pickle', 'rb') as f:
     Sq_loss_base = pickle.load(f)
 
 sq_loss_ann_fix=[]
@@ -31,17 +30,14 @@ sq_loss_base_fix=[]
 
 for i in range(len(Sq_loss_ANN)):
     new_array=np.ravel(Sq_loss_ANN[i])
-    #globals()["Sq_loss_ANN_"+str(i+1)]=new_array
     sq_loss_ann_fix=np.concatenate((sq_loss_ann_fix,new_array))
     
 for i in range(len(Sq_loss_RLR)):
     new_array=np.ravel(Sq_loss_RLR[i])
-    #globals()["Sq_loss_RLR_"+str(i+1)]=new_array
     sq_loss_rlr_fix=np.concatenate((sq_loss_rlr_fix,new_array))
     
 for i in range(len(Sq_loss_base)):
     new_array=np.ravel(Sq_loss_base[i])
-    #globals()["Sq_loss_base_"+str(i+1)]=new_array
     sq_loss_base_fix=np.concatenate((sq_loss_base_fix,new_array))
 
 

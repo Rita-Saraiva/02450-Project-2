@@ -9,11 +9,8 @@ Created on %(date)s
 from Loading_data import * 
 
 #Importing packages
-from matplotlib.pylab import (figure, semilogx, loglog, xlabel, ylabel, legend, 
-                           title, subplot, show, grid)
+from matplotlib.pylab import (figure, loglog, xlabel, ylabel, legend, title, show, grid)
 import numpy as np
-from scipy.io import loadmat
-import sklearn.linear_model as lm
 from sklearn import model_selection
 from toolbox_02450 import rlr_validate
 
@@ -36,7 +33,6 @@ M = M+1
 # Create crossvalidation partition for evaluation
 K = 10
 CV = model_selection.KFold(K, shuffle=True,random_state=1)
-#CV = model_selection.KFold(K, shuffle=False)
 
 # Values of lambda
 lambdas=np.zeros([1200])
@@ -44,7 +40,6 @@ lambdas[:1000]=np.arange(0,1,0.001)
 lambdas[1000:] = np.power(10,np.arange(0,2,0.01))
 
 # Initialize variables
-
 Error_train = np.empty((K,1))
 Error_test = np.empty((K,1))
 Error_train_rlr = np.empty((K,1))
@@ -56,9 +51,8 @@ mu = np.empty((K, M-1))
 sigma = np.empty((K, M-1))
 w_noreg = np.empty((M,K))
 
-k=0
-for train_index, test_index in CV.split(X,y):
-    
+for (k, (train_index, test_index)) in enumerate(CV.split(X,y)): 
+  
     # extract training and test set for current CV fold
     X_train = X[train_index]
     y_train = y[train_index]
@@ -98,11 +92,6 @@ for train_index, test_index in CV.split(X,y):
     Error_train[k] = np.square(y_train-X_train @ w_noreg[:,k]).sum(axis=0)/y_train.shape[0]
     Error_test[k] = np.square(y_test-X_test @ w_noreg[:,k]).sum(axis=0)/y_test.shape[0]
     
-    # OR ALTERNATIVELY: you can use sklearn.linear_model module for linear regression:
-    #m = lm.LinearRegression().fit(X_train, y_train)
-    #Error_train[k] = np.square(y_train-m.predict(X_train)).sum()/y_train.shape[0]
-    #Error_test[k] = np.square(y_test-m.predict(X_test)).sum()/y_test.shape[0]
-
     # Display the results for the last cross-validation fold
     if k == K-1:
         figure(k, figsize=(6,8))
@@ -113,12 +102,6 @@ for train_index, test_index in CV.split(X,y):
         legend(['Train error','Validation error'])
         grid()
     
-    # To inspect the used indices, use these print statements
-    #print('Cross validation fold {0}/{1}:'.format(k+1,K))
-    #print('Train indices: {0}'.format(train_index))
-    #print('Test indices: {0}\n'.format(test_index))
-
-    k+=1
 
 show()
 # Display results

@@ -13,12 +13,11 @@ Created on Tue Apr 11 14:31:48 2023
 #Importing data
 from Loading_data import * 
 
-
 # exercise 8.2.6
 import numpy as np
 import torch
 from sklearn import model_selection
-from toolbox_02450 import train_neural_net, rlr_validate
+from toolbox_02450 import train_neural_net
 from Suporting_Functions import RLR_and_ANN_validate
 
 
@@ -84,15 +83,11 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     # Evaluate training and test performance  
     Sq_loss_RLR.append(np.power(y_test-X_test @ weight[k1,:].T,2).tolist())
     Gen_Error_Table[k1,1]=np.power(y_test-X_test @ weight[k1,:].T,2).mean(axis=0)
-    
-     
-    
+        
     print('\n Evaluation of baseline model Outer_CV')
     #Computing  and Storing basline model error 
-    Sq_loss_base.append(np.square(y_test-y_test.mean()).tolist())   
+    Sq_loss_base.append(np.square(y_test-y_train.mean()).tolist())   
     Gen_Error_Table[k1,2] = np.square(y_test-y_train.mean()).sum(axis=0)/y_train.shape[0]
-        
-    
     
     print('\n Evaluation of ANN Outer_CV')  
 
@@ -125,16 +120,14 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     mse = (sum(se).type(torch.float)/len(y_test)).data.numpy() #mean
     Gen_Error_Table[k1,0]=mse
     
-   
-    
 #%%    
 import pickle
 
-with open('Sq_loss_ANN_Final.pickle', 'wb') as f:
+with open('Sq_loss_ANN_Monday.pickle', 'wb') as f:
     pickle.dump(Sq_loss_ANN, f)
-with open('Sq_loss_RLR_Final.pickle', 'wb') as f:
+with open('Sq_loss_RLR_Monday.pickle', 'wb') as f:
     pickle.dump(Sq_loss_RLR, f)
-with open('Sq_loss_base_Final.pickle', 'wb') as f:
+with open('Sq_loss_base_Monday.pickle', 'wb') as f:
     pickle.dump(Sq_loss_base, f)
 
 from tabulate import tabulate

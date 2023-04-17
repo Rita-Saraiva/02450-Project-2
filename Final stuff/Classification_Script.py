@@ -8,7 +8,6 @@ Created on Sat Apr 15 13:47:14 2023
 #import os
 #os.chdir('C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/02450-Project-2/02450-Project-2/Final stuff')
 
-
 #Importing data
 from Loading_data import * 
 
@@ -22,7 +21,6 @@ from Suporting_Functions import RLogR_and_CT_validate
 
 # Type of Glass - the class we are trying predict
 y = glass_type.squeeze()
-#BinaryGlassType
 #The elements' presence and refractive index
 X = Y2
 
@@ -76,34 +74,36 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
     X_train = (X_train - mu_train) / sigma_train
     X_test = (X_test - mu_train) / sigma_train
     
-    
+    #Defining Logistic regression model
     mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
                                    tol=1e-4, 
                                    penalty='l2', C=1/RLogR_opt_lambda)
+    #Fitting model on data
     mdl.fit(X_train,y_train)
+    #Predicting
     y_test_est = mdl.predict(X_test)
+    #Storing predictions and errors
     dy.append(y_test_est)
-
-
-
     Gen_Error_Table[k1,1] = np.sum(y_test_est!=y_test) / len(y_test)
     
     
     print('\n Evaluation of Class_Tree Outer_CV')  
     
-    # Fit decision tree classifier, Gini split criterion, different pruning levels
+    # Fit decision tree classifier, Entropy criterion, different optimal max depths
     dtc = tree.DecisionTreeClassifier(criterion='entropy', max_depth=CT_opt_tc)
     dtc = dtc.fit(X_train,y_train)
 
     # Evaluate classifier's misclassification rate over train/test data
     y_est_test = np.asarray(dtc.predict(X_test),dtype=int)
 
-    
+    #Storing predictions and errors
     dy.append(y_est_test)
     Gen_Error_Table[k1,0] = sum(y_est_test != y_test) / y_est_test.shape[0]
     
     print('\n Evaluation of baseline model Outer_CV')
     
+    #Baseline method
+    #Computing most common class in training data
     class_count=np.array([0]*7)
     for element in y_train:
         case = {
@@ -119,20 +119,20 @@ for (k1, (train_index, test_index)) in enumerate(CV.split(X,y)):
         exec(statement)
     base_max=np.argmax(class_count)+1
     
-    base_true =0
-    base_false =0
+    #Prediction is then always most occuring class in y_train
     base_pred=np.array([base_max]*len(y_test))
+    #Number of errors are computed
     base_error=(base_pred!=y_test)    
-    
-    dy.append(base_pred)
-    
-    #print(f'Error for baseline at Fold {k1+1} is {base_error.mean()} %')
+    #Predictions are stored and generalization error is stored
+    dy.append(base_pred)    
     Gen_Error_Table[k1,2] = base_error.mean()
+    
+    #Storing all predictions for three differen models for outer loop k1
     y_hat_class.append(dy)
 
 #%%
 import pickle
-
+#Saving all data in .pickle files
 with open('y_hat_class.pickle', 'wb') as f:
     pickle.dump(y_hat_class, f)
 with open('y_true_class.pickle', 'wb') as f:
@@ -140,6 +140,7 @@ with open('y_true_class.pickle', 'wb') as f:
 
 print('\nEnd of Cross-Validation') 
 
+#Displaying comparison results as Tabel
 Top=np.array([["Outer fold","Class Tree","","Logistic","Regression","baseline"],
               ["i        ","*Depth","Test^E_i","*Lambda_i ","Test^E_i ","Test^E_i"]])
 

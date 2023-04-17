@@ -18,7 +18,6 @@ import pandas as pd
 # We start by defining the path to the file that we're we need to load.
 # Upon inspection, we saw that the messy_data.data was infact a file in the
 # format of a CSV-file with a ".data" extention instead.  
-#file_path = r'C:/Users/ritux/OneDrive - Danmarks Tekniske Universitet/Skrivebord/DTU/1 6º Semester/1 3 02450 Machine Learning/Project 2/glass.data'
 # First of we simply read the file in using readtable, however, we need to
 # tell the function that the file is tab-seperated. We also need to specify
 # that the header is in the second row:
@@ -45,10 +44,6 @@ X = D
 
 #Shape of data
 N, M = D.shape
-
-#Standardizing and then doing the same plots and computations
-# Subtract the mean from the data
-Y1 = X - np.ones((N, 1))*X.mean(0)
 
 # Subtract the mean from the data and divide by the attribute standard
 # deviation to obtain a standardized dataset:
@@ -79,32 +74,4 @@ AttributeNames = ["Refractive Index","Sodium",
 #Abreviations of Attributenames are also manually added
 ShortAttributeNames = ["RI","Na","Mg","Al","Si","K","Ca","Ba","Fe"]
 
-
-#One-of-K Coding
-
-#Class Based - One-of-7 Coding - Matrix
-ClassKMatrix=np.zeros([N,len(ClassNames)])
-
-# Class_Vector = np.array([ int(Element-1) for Element in glass_type]).T
-# K = len(ClassNames)
-# Class_Encoding = np.zeros((N, K))
-# Class_Encoding[np.arange(N), Class_Vector] = 1
-
-#Window/NonWindow Based - One-of-2 Coding - Matrix
-BinaryKMatrix=np.zeros([N,2])
-BinaryGlassType=np.zeros([N])
-
-for i in range(N):#glass type
-    Type=int(glass_type[i])-1
-    ClassKMatrix[i,Type]=1
-    if Type<=4:
-        BinaryKMatrix[i,0]=1
-        BinaryGlassType[i]=1
-    else:
-        BinaryKMatrix[i,1]=1
-        BinaryGlassType[i]=2
-
-    
-#Generating new data matrix with ClassKmatrix concatenated with the data
-#Y_reg = np.concatenate((Y2,ClassKMartix),axis=1)
 

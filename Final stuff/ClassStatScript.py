@@ -4,9 +4,6 @@ Created on Sat Apr 15 13:33:49 2023
 
 @author: Jonas
 """
-
-
-
 from toolbox_02450 import *
 import pickle
 from sklearn import *
@@ -37,7 +34,7 @@ for i in range(len(y_hat_class)):
     y_true_fix=np.append(y_true_fix,new_true)
 del (new_array, new_true, y_hat_class, y_true_class, i)
 
-
+#%%
 
 alpha = 0.05
 
